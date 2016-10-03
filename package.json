@@ -1,11 +1,37 @@
 {
-  "name": "angular-datepicker",
-  "version": "2.1.3",
-  "main": "dist/angular-datepicker.js",
-  "repository": {
-    "url": "https://github.com/g00fy-/angular-datepicker.git"
+  "_args": [
+    [
+      "angular-datepicker@https://github.com/ClauseMatch/angular-datepicker/tarball/2.0.7",
+      "C:\\inetpub\\wwwroot\\TMCA\\src\\Lexus\\IE.Lexus.MainSite.Web.UI\\dep-runtime"
+    ]
+  ],
+  "_from": "https://github.com/ClauseMatch/angular-datepicker/tarball/2.0.7",
+  "_id": "angular-datepicker@2.0.3",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/angular-datepicker",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "angular-datepicker",
+    "raw": "angular-datepicker@https://github.com/ClauseMatch/angular-datepicker/tarball/2.0.7",
+    "rawSpec": "https://github.com/ClauseMatch/angular-datepicker/tarball/2.0.7",
+    "scope": null,
+    "spec": "https://github.com/ClauseMatch/angular-datepicker/tarball/2.0.7",
+    "type": "remote"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://github.com/ClauseMatch/angular-datepicker/tarball/2.0.7",
+  "_shasum": "536008ffe2e78f5bc9989ac184ca057c6b5306f5",
+  "_shrinkwrap": null,
+  "_spec": "angular-datepicker@https://github.com/ClauseMatch/angular-datepicker/tarball/2.0.7",
+  "_where": "C:\\inetpub\\wwwroot\\TMCA\\src\\Lexus\\IE.Lexus.MainSite.Web.UI\\dep-runtime",
+  "bugs": {
+    "url": "https://github.com/g00fy-/angular-datepicker/issues"
   },
   "dependencies": {},
+  "description": "#### Requirements",
   "devDependencies": {
     "bower": "1.5.3",
     "grunt": "0.4.5",
@@ -32,7 +58,6 @@
     "karma-chrome-launcher": "^0.1.12",
     "karma-firefox-launcher": "^0.1.6",
     "karma-jasmine": "^0.3.5",
-    "karma-ng-html2js-preprocessor": "^0.2.1",
     "karma-phantomjs-launcher": "0.2.0",
     "karma-script-launcher": "^0.1.0",
     "load-grunt-tasks": "3.2.0",
@@ -40,5 +65,15 @@
   },
   "engines": {
     "node": ">=0.8.0"
-  }
+  },
+  "homepage": "https://github.com/g00fy-/angular-datepicker#readme",
+  "main": "dist/angular-datepicker.js",
+  "name": "angular-datepicker",
+  "optionalDependencies": {},
+  "readme": "# AngularJS datepicker directives\n\n#### Requirements\n\n-  Angular v1.2+\n-  MomentJS\n-  Moment Timezone (If timezones are being used)\n\n## Usage Example\n\n[Live demo](https://rawgithub.com/g00fy-/angular-datepicker/master/app/index.html)\n\n## New features\n\nThis fork of angular-datepicker contains several features.\n\n### Timezone Support\n\n* The directive will work with or without a specified timezone. \n* If the timezone is known, it can be assigned to the datepicker via the `timezone` attribute. \n* If no timezone is provided, then the local time will be used.\n\n##### No timezone information\n\n```html\n<div date-picker></div>\n```\n\n##### Specific timezone (London, UK)\n\n```html\n<div date-picker timezone=\"Europe/London\"></div>\n```\n\n\n##### Specific timezone (Hong Kong, CN)\n\n```html\n<div date-picker timezone=\"Asia/Hong_Kong\"></div>\n```\n\n\n### Maximum / minimum dates:\n\n* These attributes restrict the dates that can be selected. \n* These work differently from the original `min-date` and `max-date` attributes, which they replace. \n* The original attributes allow selecting any dates and just mark the input as invalid. \n* With these attributes, if a date in the picker is outside of the valid range, then it will not be selectable.\n\n##### Minimum date:\n\n```html\n<input date-time min-date=\"minDate\">\n```\n\n##### Maximum date:\n\n```html\n<input date-time max-date=\"maxDate\">\n```\n\n##### Minimum and maximum date:\n\n```html\n<input date-time min-date=\"minDate\" max-date=\"maxDate\">\n```\n\n### Date format (for input fields):\n\n* A custom format for a date can be assigned via the `format` atribute.\n  * This format will be used to display the date on an input field.\n  * If not provided, a default format will be used.\n  * See: [format options](http://momentjs.com/docs/#/displaying/format/)\n\n```html\n<input date-time format=\"yyyy-MM-dd HH:mm\">\n```\n\n\n### Callback on date change\n\n* Adding a `date-change` attribute containing a function name will cause this function to be called when the date changes in the picker.\n\n```html\n<input date-time date-change=\"changeDate\">\n```\n\n### Update events\n\n* An event can be broadcast from the parent scope which will update specific pickers with new settings. The settings which can be changed are:\n  * `minDate`: Earliest selectable date for this picker. Disabled if this value is falsy.\n  * `maxDate`: Latest selectable date for this picker. Disabled if this value is falsy.\n  * `minView`: Minimum zoom level for date/time selection. Disabled if this value is falsy.\n  * `maxView`: Maximum zoom level for date/time selection. Disabled if this value is falsy.\n  * `view`: Default zoom level for date/time selection. Set to default value if this value is falsy.\n  * `format`: Format string used to display dates on the input field. Set to default value if this value is falsy. \n    * See: [format options](http://momentjs.com/docs/#/displaying/format/)\n\t* This option cannot be used on the `date-picker` directive directly, it must be used on a `date-time` input field.\n* The possible for the `view`, `minView` and `maxView` fields are:\n  * `year`, `month`, `date`, `hours`, `minutes`.\n* The event is targeted at specific pickers using their `ID` attributes.\n  * If a picker exists with the same `ID` then the information in this picker will be updated.\n  * A single `ID` can be used, or an array of `ID`s\n\n#### Create picker with ID\n\n```html\n<input date-time id=\"pickerToUpdate\">\n```\n\n#### Update one picker.\n\n```javascript\n$scope.$broadcast('pickerUpdate', 'pickerToUpdate', {\n\tformat: 'D MMM YYYY HH:mm',\n\tmaxDate: maxSelectableDate, //A moment object, date object, or date/time string parsable by momentjs\n\tminView: 'hours',\n\tview: false //Use default\n});\n```\n\n#### Update multiple pickers.\n\n```javascript\n$scope.$broadcast('pickerUpdate', ['pickerToUpdate', 'secondPickerToUpdate'], {\n\tformat: 'lll'\n});\n```",
+  "readmeFilename": "README.md",
+  "repository": {
+    "url": "git+https://github.com/g00fy-/angular-datepicker.git"
+  },
+  "version": "2.0.3"
 }

@@ -4,17 +4,7 @@ module.exports = function (config) {
     basePath : '',
 
     // list of files / patterns to load in the browser
-    files: [
-      'app/components/angular/angular.js',
-      'app/components/angular-mocks/angular-mocks.js',
-      'app/components/moment/moment.js',
-      'app/components/moment-timezone/builds/moment-timezone-with-data.js',
-      'app/scripts/*.js',
-      'app/scripts/**/*.js',
-      'test/mock/**/*.js',
-      'test/spec/**/*.js',
-      'app/templates/**/*.html'
-    ],
+    files: ['app/components/angular/angular.js', 'app/components/angular-mocks/angular-mocks.js', 'app/components/moment/moment.js', 'app/components/moment-timezone/builds/moment-timezone-with-data.js', 'app/scripts/*.js', 'app/scripts/**/*.js', 'test/mock/**/*.js', 'test/spec/**/*.js'],
 
     // list of files to exclude
     exclude : [
@@ -22,7 +12,7 @@ module.exports = function (config) {
     ],
 
     preprocessors : {
-      '**/*.html': ['ng-html2js']
+
     },
 
     proxies : {
@@ -59,25 +49,13 @@ module.exports = function (config) {
     // - IE (only Windows)
     browsers : [ 'Chrome' ],
 
-    plugins : [
-      'karma-chrome-launcher',
-      'karma-firefox-launcher',
-      'karma-script-launcher',
-      'karma-phantomjs-launcher',
-      'karma-jasmine',
-      'karma-ng-html2js-preprocessor'
-    ],
+    plugins : [ 'karma-chrome-launcher', 'karma-firefox-launcher', 'karma-script-launcher', 'karma-phantomjs-launcher', 'karma-jasmine' ],
 
     // If browser does not capture in given timeout [ms], kill it
-    captureTimeout : 15000,
+    captureTimeout : 5000,
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun : false,
-
-    ngHtml2JsPreprocessor: {
-      // strip this from the file path 
-      stripPrefix: 'app/'
-    }
+    singleRun : false
   });
 };

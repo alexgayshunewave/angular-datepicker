@@ -1,6 +1,8 @@
-'use strict';
+/* global moment */
+
 angular.module('datePicker').factory('datePickerUtils', function () {
-  var tz, firstDay;
+  'use strict';
+  var tz;
   var createNewDate = function (year, month, day, hour, minute) {
     var utc = Date.UTC(year | 0, month | 0, day | 0, hour | 0, minute | 0);
     return tz ? moment.tz(utc, tz) : moment(utc);
@@ -15,7 +17,7 @@ angular.module('datePicker').factory('datePickerUtils', function () {
         offset = m.utcOffset() / 60,
         minutes = [], minute;
 
-      for (minute = 0; minute < 60; minute += step) {
+      for (minute = 0 ; minute < 60 ; minute += step) {
         pushedDate = createNewDate(year, month, day, hour - offset, minute);
         minutes.push(pushedDate);
       }
@@ -24,7 +26,7 @@ angular.module('datePicker').factory('datePickerUtils', function () {
     getVisibleWeeks: function (m) {
       m = moment(m);
       var startYear = m.year(),
-        startMonth = m.month();
+          startMonth = m.month();
 
       //Set date to the first day of the month
       m.date(1);
@@ -32,8 +34,13 @@ angular.module('datePicker').factory('datePickerUtils', function () {
       //Grab day of the week
       var day = m.day();
 
-      //Go back the required number of days to arrive at the previous week start
-      m.date(firstDay - (day + (firstDay >= day ? 6 : -1)));
+      if (day === 0) {
+        //If the first day of the month is a sunday, go back one week.
+        m.date(-6);
+      } else {
+        //Otherwise, go back the required number of days to arrive at the previous sunday
+        m.date(1 - day);
+      }
 
       var weeks = [];
 
@@ -71,7 +78,7 @@ angular.module('datePicker').factory('datePickerUtils', function () {
       return years;
     },
     getDaysOfWeek: function (m) {
-      m = m ? m : (tz ? moment.tz(tz).day(firstDay) : moment().day(firstDay));
+      m = m ? m : (tz ? moment.tz(tz).day(0) : moment().day(0));
 
       var year = m.year(),
         month = m.month(),
@@ -117,7 +124,7 @@ angular.module('datePicker').factory('datePickerUtils', function () {
         hour, pushedDate, actualOffset,
         offset = m.utcOffset() / 60;
 
-      for (hour = 0; hour < 24; hour++) {
+      for (hour = 0 ; hour < 24 ; hour++) {
         pushedDate = createNewDate(year, month, day, hour - offset, 0, false);
         actualOffset = pushedDate.utcOffset() / 60;
         if (actualOffset !== offset) {
@@ -149,58 +156,42 @@ angular.module('datePicker').factory('datePickerUtils', function () {
     isSameMinutes: function (model, date) {
       return this.isSameHour(model, date) && model.minutes() === date.minutes();
     },
-    setParams: function (zone, fd) {
+    setParams: function (zone) {
       tz = zone;
-      firstDay = fd;
     },
-    scopeSearch: function (scope, name, comparisonFn) {
-      var parentScope = scope,
-        nameArray = name.split('.'),
-        target, i, j = nameArray.length;
-
+    findFunction: function (scope, name) {
+      //Search scope ancestors for a matching function.
+      //Can probably combine this and the below function
+      //into a single search function and two comparison functions
+      //Need to add support for lodash style selectors (eg, 'objectA.objectB.function')
+      var parentScope = scope;
       do {
-        target = parentScope = parentScope.$parent;
-
-        //Loop through provided names.
-        for (i = 0; i < j; i++) {
-          target = target[nameArray[i]];
-          if (!target) {
-            continue;
-          }
+        parentScope = parentScope.$parent;
+        if (angular.isFunction(parentScope[name])) {
+          return parentScope[name];
         }
-
-        //If we reached the end of the list for this scope,
-        //and something was found, trigger the comparison
-        //function. If the comparison function is happy, return
-        //found result. Otherwise, continue to the next parent scope
-        if (target && comparisonFn(target)) {
-          return target;
-        }
-
       } while (parentScope.$parent);
 
       return false;
     },
-    findFunction: function (scope, name) {
-      //Search scope ancestors for a matching function.
-      return this.scopeSearch(scope, name, function (target) {
-        //Property must also be a function
-        return angular.isFunction(target);
-      });
-    },
     findParam: function (scope, name) {
       //Search scope ancestors for a matching parameter.
-      return this.scopeSearch(scope, name, function () {
-        //As long as the property exists, we're good
-        return true;
-      });
+      var parentScope = scope;
+      do {
+        parentScope = parentScope.$parent;
+        if (parentScope[name]) {
+          return parentScope[name];
+        }
+      } while (parentScope.$parent);
+
+      return false;
     },
     createMoment: function (m) {
       if (tz) {
         return moment.tz(m, tz);
       } else {
-        //If input is a moment, and we have no TZ info, we need to remove TZ
-        //info from the moment, otherwise the newly created moment will take
+        //If input is a moment, and we have no TZ info, we need to remove TZ 
+        //info from the moment, otherwise the newly created moment will take 
         //the timezone of the input moment. The easiest way to do that is to
         //take the unix timestamp, and use that to create a new moment.
         //The new moment will use the local timezone of the user machine.
@@ -221,19 +212,9 @@ angular.module('datePicker').factory('datePickerUtils', function () {
 
       return result;
     },
-    //Checks if an event targeted at a specific picker, via either a string name, or an array of strings.
     eventIsForPicker: function (targetIDs, pickerID) {
-      function matches(id) {
-        if (id instanceof RegExp) {
-          return id.test(pickerID);
-        }
-        return id === pickerID;
-      }
-
-      if (angular.isArray(targetIDs)) {
-        return targetIDs.some(matches);
-      }
-      return matches(targetIDs);
+      //Checks if an event targeted at a specific picker, via either a string name, or an array of strings.
+      return (angular.isArray(targetIDs) && targetIDs.indexOf(pickerID) > -1 || targetIDs === pickerID);
     }
   };
 });
